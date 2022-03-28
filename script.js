@@ -1,9 +1,15 @@
 "use strict";
 
+//Storage HighScore
+let highscore = 0;
+if (localStorage.getItem("highscore") != null) {
+  highscore = localStorage.getItem("highscore");
+  document.querySelector(".highscore").textContent = highscore;
+}
+
 //Random Number between 1-20
 let SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
 let POINT = 50;
-let highscore = 0;
 let text = "";
 let game = 0;
 let level = 1;
@@ -11,7 +17,8 @@ let life = 5;
 let topLife = 5;
 let score = 0;
 let win = false;
-console.log("Welcome Bid Corporations 2022©");
+console.log("Copyright© 2022 BidGame");
+
 // HTML <body>
 const body = document.querySelector("body");
 
@@ -183,6 +190,7 @@ btnCheck.addEventListener("click", function () {
       if (score > highscore) {
         highscore = score;
         parHighscore.textContent = highscore;
+        localStorage.setItem("highscore", highscore);
       }
       life = correctNumberAtFirst(life, "😎 You are the best!!");
     } else {
@@ -193,6 +201,7 @@ btnCheck.addEventListener("click", function () {
       if (score > highscore) {
         highscore = score;
         parHighscore.textContent = highscore;
+        localStorage.setItem("highscore", highscore);
       }
       life = correctNumber(life, "🎉 Correct Number!");
     }

@@ -1,5 +1,11 @@
 @import url("https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap");
 
+.cr {
+  margin-top: 10rem;
+  text-align: end;
+  font-size: 0.5rem;
+}
+
 * {
   margin: 0;
   padding: 0;
