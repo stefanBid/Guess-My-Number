@@ -192,7 +192,7 @@ btnCheck.addEventListener("click", function () {
         parHighscore.textContent = highscore;
         localStorage.setItem("highscore", highscore);
       }
-      life = correctNumberAtFirst(life, "😎 You are the best!!");
+      life = correctNumberAtFirst(life, "😎 Supreme champion!");
     } else {
       //Incraese the score and calculate the highScore
       score = score + life * POINT;
