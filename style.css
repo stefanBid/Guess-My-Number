@@ -221,6 +221,23 @@ main {
 
 /* -------------------------- */
 /* ANIMATION  SECTION */
+
+.up-life {
+  animation: green-white 0.1s infinite;
+}
+
+@keyframes green-white {
+  0% {
+    color: #eee;
+  }
+  50% {
+    color: #023810;
+  }
+  100% {
+    color: #eee;
+  }
+}
+
 .error {
   animation: red-white 0.1s infinite;
 }

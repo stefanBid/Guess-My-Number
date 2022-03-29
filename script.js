@@ -9,6 +9,7 @@ if (localStorage.getItem("highscore") != null) {
 
 //Random Number between 1-20
 let SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
+
 let POINT = 50;
 let text = "";
 let game = 0;
@@ -18,6 +19,15 @@ let topLife = 5;
 let score = 0;
 let win = false;
 console.log("Copyright© 2022 BidGame");
+
+//BONUS LEVEL Variables
+let BONUS_NUMBER = 0;
+let levelCheck = 5;
+let bonusCheck = 0;
+let inBonus = false;
+let bonusFinish = false;
+
+const bonusNumbers = new Array();
 
 // HTML <body>
 const body = document.querySelector("body");
@@ -87,6 +97,14 @@ const loseGame = function () {
   parRanking.textContent = text;
 };
 
+//Function that control when lost the level bonus
+const loseBonus = function (message) {
+  titMessage.textContent = message;
+  divNumber.textContent = BONUS_NUMBER;
+  body.style.backgroundColor = "#ff0000";
+  btnLevNext.classList.remove("hidden");
+};
+
 //Function that control life decrease
 const scoreDecrease = function (life, message) {
   life = life - 1;
@@ -135,11 +153,42 @@ const noNumber = function (message) {
     titMessage.classList.remove("error1");
   }, 200);
 };
+//Function that control no number input in bonus level
+const noNumberBonus = function () {
+  inGuess.classList.add("error2");
+  titMessage.classList.add("error1");
+  setTimeout(function () {
+    inGuess.classList.remove("error2");
+    titMessage.classList.remove("error1");
+  }, 200);
+};
 
+//Function that control the win of bonus level
+const correctBonusNumber = function (life, message) {
+  life = life + 7;
+  parLife.textContent = `x${life} ❤️`;
+  parLife.classList.add("up-life");
+  setTimeout(function () {
+    parLife.classList.remove("up-life");
+  }, 200);
+  titMessage.textContent = message;
+  divNumber.textContent = BONUS_NUMBER;
+  divNumber.classList.add("win1");
+  setTimeout(function () {
+    divNumber.classList.remove("win1");
+  }, 5000);
+  body.style.backgroundColor = "#60b347";
+  btnLevNext.classList.remove("hidden");
+  return life;
+};
 //Function that control the win
 const correctNumber = function (life, message) {
   life = life + 1;
   parLife.textContent = `x${life} ❤️`;
+  parLife.classList.add("up-life");
+  setTimeout(function () {
+    parLife.classList.remove("up-life");
+  }, 200);
   titMessage.textContent = message;
   divNumber.textContent = SECRET_NUMBER;
   divNumber.classList.add("win");
@@ -155,7 +204,10 @@ const correctNumber = function (life, message) {
 const correctNumberAtFirst = function (life, message) {
   life = life + 1;
   parLife.textContent = `x${life} ❤️`;
-
+  parLife.classList.add("up-life");
+  setTimeout(function () {
+    parLife.classList.remove("up-life");
+  }, 200);
   titMessage.textContent = message;
   divNumber.textContent = SECRET_NUMBER;
   divNumber.classList.add("win1");
@@ -172,19 +224,14 @@ const correctNumberAtFirst = function (life, message) {
 btnCheck.addEventListener("click", function () {
   const guess = Number(inGuess.value);
 
-  //When  there is no Input
-  if (!guess && !win) {
-    if (life > 0) {
-      noNumber("⛔️ No! Number");
-    }
-
-    //When the number is correct
-  } else if (guess === SECRET_NUMBER && !win && life > 0) {
-    win = true;
-
-    if (life === topLife) {
-      //Incraese the score and calculate the highScore
-      score = score + life * POINT * 2;
+  if (inBonus) {
+    //When  there is no Input
+    if (!guess && !bonusFinish) {
+      noNumberBonus();
+      //When the number is correct
+    } else if (guess === BONUS_NUMBER && !bonusFinish) {
+      bonusFinish = true;
+      score = score + POINT * 3;
       parScore.textContent = score;
 
       if (score > highscore) {
@@ -192,38 +239,67 @@ btnCheck.addEventListener("click", function () {
         parHighscore.textContent = highscore;
         localStorage.setItem("highscore", highscore);
       }
-      life = correctNumberAtFirst(life, "😎 Supreme champion!");
-    } else {
-      //Incraese the score and calculate the highScore
-      score = score + life * POINT;
-      parScore.textContent = score;
+      life = correctBonusNumber(life, "🎉 Correct Number!");
 
-      if (score > highscore) {
-        highscore = score;
-        parHighscore.textContent = highscore;
-        localStorage.setItem("highscore", highscore);
+      //When the number isn't correct
+    } else if (guess != BONUS_NUMBER && !bonusFinish) {
+      loseBonus("😅 Ops...");
+      bonusFinish = true;
+    }
+  } else {
+    //When  there is no Input
+    if (!guess && !win) {
+      if (life > 0) {
+        noNumber("⛔️ No! Number");
       }
-      life = correctNumber(life, "🎉 Correct Number!");
-    }
 
-    //When the number is too high
-  } else if (guess > SECRET_NUMBER) {
-    if (life > 1 && !win) {
-      life = scoreDecrease(life, "📈 Too High!");
-      suggestionH("📈");
-    } else if (!win && life === 1) {
-      loseGame();
-      life = life - 1;
-    }
+      //When the number is correct
+    } else if (guess === SECRET_NUMBER && !win && life > 0) {
+      win = true;
 
-    //When the number is too low
-  } else if (guess < SECRET_NUMBER) {
-    if (life > 1 && !win) {
-      life = scoreDecrease(life, "📉 Too Low!");
-      suggestionL("📉");
-    } else if (!win && life === 1) {
-      loseGame();
-      life = life - 1;
+      if (life === topLife) {
+        //Incraese the score and calculate the highScore
+        score = score + life * POINT * 2;
+        parScore.textContent = score;
+
+        if (score > highscore) {
+          highscore = score;
+          parHighscore.textContent = highscore;
+          localStorage.setItem("highscore", highscore);
+        }
+        life = correctNumberAtFirst(life, "😎 Supreme champion!");
+      } else {
+        //Incraese the score and calculate the highScore
+        score = score + life * POINT;
+        parScore.textContent = score;
+
+        if (score > highscore) {
+          highscore = score;
+          parHighscore.textContent = highscore;
+          localStorage.setItem("highscore", highscore);
+        }
+        life = correctNumber(life, "🎉 Correct Number!");
+      }
+
+      //When the number is too high
+    } else if (guess > SECRET_NUMBER) {
+      if (life > 1 && !win) {
+        life = scoreDecrease(life, "📈 Too High!");
+        suggestionH("📈");
+      } else if (!win && life === 1) {
+        loseGame();
+        life = life - 1;
+      }
+
+      //When the number is too low
+    } else if (guess < SECRET_NUMBER) {
+      if (life > 1 && !win) {
+        life = scoreDecrease(life, "📉 Too Low!");
+        suggestionL("📉");
+      } else if (!win && life === 1) {
+        loseGame();
+        life = life - 1;
+      }
     }
   }
 });
@@ -239,8 +315,6 @@ btnAgain.addEventListener("click", function () {
   parLife.textContent = `x${life} ❤️`;
   SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
   divNumber.textContent = "?";
-  divNumber.classList.remove("win");
-  divNumber.classList.remove("win1");
   titMessage.textContent = "Guess My Number!";
   body.style.backgroundColor = "#222";
   inGuess.value = "";
@@ -254,17 +328,54 @@ btnAgain.addEventListener("click", function () {
 //EVENT NEXT LEVEL
 btnLevNext.addEventListener("click", function () {
   level = level + 1;
-  titLevel.textContent = `level ${level}`;
-  topLife = life;
-  win = false;
-  SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
-  divNumber.textContent = "?";
-  divNumber.classList.remove("win");
-  divNumber.classList.remove("win1");
-  titMessage.textContent = "Guess My Number!";
-  body.style.backgroundColor = "#222";
-  inGuess.value = "";
-  btnLevNext.classList.add("hidden");
+
+  if (level === levelCheck) {
+    //i'am in bonus level
+    levelCheck = levelCheck + 5;
+    titLevel.textContent = `level Bonus`;
+    divNumber.textContent = "☆";
+    divNumber.classList.remove("win");
+    divNumber.classList.remove("win1");
+    body.style.backgroundColor = "#6200ff";
+    inGuess.value = "";
+    btnLevNext.classList.add("hidden");
+    bonusFinish = false;
+    inBonus = true;
+    let flag = false;
+
+    while (!flag) {
+      bonusNumbers[0] = Math.trunc(Math.random() * 78) + 21;
+      bonusNumbers[1] = Math.trunc(Math.random() * 78) + 21;
+      bonusNumbers[2] = Math.trunc(Math.random() * 78) + 21;
+
+      if (
+        bonusNumbers[0] != bonusNumbers[1] &&
+        bonusNumbers[0] != bonusNumbers[2] &&
+        bonusNumbers[1] != bonusNumbers[2]
+      ) {
+        flag = true;
+      }
+    }
+    bonusCheck = Math.trunc(Math.random() * 3);
+    BONUS_NUMBER = bonusNumbers[bonusCheck];
+    titMessage.textContent = `${bonusNumbers[0]}-${bonusNumbers[1]}-${bonusNumbers[2]} ?`;
+  } else {
+    //i'am in a normal level
+
+    titLevel.textContent = `level ${level}`;
+    topLife = life;
+    win = false;
+    SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
+    inBonus = false;
+    bonusFinish = false;
+    divNumber.textContent = "?";
+    divNumber.classList.remove("win");
+    divNumber.classList.remove("win1");
+    titMessage.textContent = "Guess My Number!";
+    body.style.backgroundColor = "#222";
+    inGuess.value = "";
+    btnLevNext.classList.add("hidden");
+  }
 });
 
 //EVENT OPEN GAME INFO
