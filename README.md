@@ -60,9 +60,3 @@ For each 5 level you can play a bonus level which consists in guessing a number 
 ## When you lose
 
 <img src="https://i.ibb.co/LN6fw7C/lost.png" alt="Guess My Number" >
-
-
-
-<!-- Coolors Palette Widget -->
-      <script src="https://coolors.co/palette-widget/widget.js"></script>
-      <script data-id="08259319639549265">new CoolorsPaletteWidget("08259319639549265", ["eeeeee","60b347","ffbb00","ff0000","6200ff","0634ff","222222"]); </script>
