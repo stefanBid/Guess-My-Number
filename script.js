@@ -90,11 +90,11 @@ const loseGame = function () {
   body.style.backgroundColor = "#ff0000";
   divNumber.textContent = SECRET_NUMBER;
   parLife.textContent = `x${0} ☠️`;
-  btnAgain.classList.remove("hidden");
   btnRank.classList.remove("hidden");
   text = parRanking.textContent;
   text = text + ` - - - Game: ${game} Level: ${level} Score: ${score} - - -`;
   parRanking.textContent = text;
+  localStorage.setItem("highscore", highscore);
 };
 
 //Function that control when lost the level bonus
@@ -237,7 +237,6 @@ btnCheck.addEventListener("click", function () {
       if (score > highscore) {
         highscore = score;
         parHighscore.textContent = highscore;
-        localStorage.setItem("highscore", highscore);
       }
       life = correctBonusNumber(life, "🎉 Correct Number!");
 
@@ -265,7 +264,6 @@ btnCheck.addEventListener("click", function () {
         if (score > highscore) {
           highscore = score;
           parHighscore.textContent = highscore;
-          localStorage.setItem("highscore", highscore);
         }
         life = correctNumberAtFirst(life, "😎 Supreme champion!");
       } else {
@@ -276,7 +274,6 @@ btnCheck.addEventListener("click", function () {
         if (score > highscore) {
           highscore = score;
           parHighscore.textContent = highscore;
-          localStorage.setItem("highscore", highscore);
         }
         life = correctNumber(life, "🎉 Correct Number!");
       }
@@ -311,6 +308,8 @@ btnAgain.addEventListener("click", function () {
   life = 5;
   win = false;
   score = 0;
+  highscore = localStorage.getItem("highscore");
+  parHighscore.textContent = highscore;
   parScore.textContent = score;
   parLife.textContent = `x${life} ❤️`;
   SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
@@ -322,7 +321,8 @@ btnAgain.addEventListener("click", function () {
   level = 1;
   titLevel.textContent = `level ${level}`;
   btnRank.classList.add("hidden");
-  btnAgain.classList.add("hidden");
+  divNumber.classList.remove("win");
+  divNumber.classList.remove("win1");
 });
 
 //EVENT NEXT LEVEL
