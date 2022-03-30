@@ -47,7 +47,7 @@ For each 5 level you can play a bonus level which consists in guessing a number 
 
 ## When you win
 
-<img src="https://i.ibb.co/hddMJxb/iVO4w.png" alt="Guess My Number" >
+<img src="https://i.ibb.co/cLn93mk/win1.png" alt="Guess My Number" >
 
 ## When you win at first
 
