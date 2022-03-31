@@ -133,6 +133,7 @@ const suggestionL = function (message) {
     divBar.style.backgroundColor = "#eee";
   }, 1500);
 };
+
 const suggestionH = function (message) {
   divBar.style.backgroundColor = "#ff0000";
   divBar.textContent = message;
@@ -153,6 +154,7 @@ const noNumber = function (message) {
     titMessage.classList.remove("error1");
   }, 200);
 };
+
 //Function that control no number input in bonus level
 const noNumberBonus = function () {
   inGuess.classList.add("error2");
@@ -181,6 +183,7 @@ const correctBonusNumber = function (life, message) {
   btnLevNext.classList.remove("hidden");
   return life;
 };
+
 //Function that control the win
 const correctNumber = function (life, message) {
   life = life + 1;
@@ -313,6 +316,7 @@ btnAgain.addEventListener("click", function () {
   parScore.textContent = score;
   parLife.textContent = `x${life} ❤️`;
   SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
+  BONUS_NUMBER = 0;
   divNumber.textContent = "?";
   titMessage.textContent = "Guess My Number!";
   body.style.backgroundColor = "#222";
@@ -329,9 +333,8 @@ btnAgain.addEventListener("click", function () {
 btnLevNext.addEventListener("click", function () {
   level = level + 1;
 
-  if (level === levelCheck) {
+  if (level % levelCheck === 0) {
     //i'am in bonus level
-    levelCheck = levelCheck + 5;
     titLevel.textContent = `level Bonus`;
     divNumber.textContent = "☆";
     divNumber.classList.remove("win");
