@@ -1,4 +1,4 @@
-`version: 1.7`
+`version: 1.8`
 
 # GuessMyNumber
 
@@ -29,6 +29,7 @@ For each 5 level you can play a bonus level which consists in guessing a number 
 | Start Game         |  5  |
 | Lost Game          |  0  |
 | Win Level          | +1  |
+| Win Level at first | +1  |
 | Don't guess number | -1  |
 | Win Bonus Level    | +7  |
 | Lost Bonus Level   | +0  |
