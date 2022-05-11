@@ -124,24 +124,44 @@ const scoreDecrease = function (life, message) {
 
 //Functions that control suggestion
 
-const suggestionL = function (message) {
-  divBar.style.backgroundColor = "#0634ff";
-  divBar.textContent = message;
-  divBar.classList.add("move-cl");
-  setTimeout(function () {
-    divBar.classList.remove("move-cl");
-    divBar.style.backgroundColor = "#eee";
-  }, 1500);
-};
-
-const suggestionH = function (message) {
-  divBar.style.backgroundColor = "#ff0000";
-  divBar.textContent = message;
-  divBar.classList.add("move-cr");
-  setTimeout(function () {
-    divBar.classList.remove("move-cr");
-    divBar.style.backgroundColor = "#eee";
-  }, 1500);
+const suggestion = function (message) {
+  if (arguments[1] === 1) {
+    //Argument 1 Suggestion  Low a little
+    divBar.style.backgroundColor = "#066eff";
+    divBar.textContent = message;
+    divBar.classList.add("move-cl");
+    setTimeout(function () {
+      divBar.classList.remove("move-cl");
+      divBar.style.backgroundColor = "#eee";
+    }, 1500);
+  } else if (arguments[1] === 2) {
+    //Argument 2 Suggestion  Low
+    divBar.style.backgroundColor = "#0634ff";
+    divBar.textContent = message;
+    divBar.classList.add("move-cl");
+    setTimeout(function () {
+      divBar.classList.remove("move-cl");
+      divBar.style.backgroundColor = "#eee";
+    }, 1500);
+  } else if (arguments[1] === 3) {
+    //Argument 3 Suggestion  heigh a little
+    divBar.style.backgroundColor = "#ff2a00";
+    divBar.textContent = message;
+    divBar.classList.add("move-cr");
+    setTimeout(function () {
+      divBar.classList.remove("move-cr");
+      divBar.style.backgroundColor = "#eee";
+    }, 1500);
+  } else if (arguments[1] === 4) {
+    //Argument 3 Suggestion  heigh
+    divBar.style.backgroundColor = "#ff0000";
+    divBar.textContent = message;
+    divBar.classList.add("move-cr");
+    setTimeout(function () {
+      divBar.classList.remove("move-cr");
+      divBar.style.backgroundColor = "#eee";
+    }, 1500);
+  }
 };
 
 //Function that control no number input
@@ -205,7 +225,7 @@ const correctNumber = function (life, message) {
 
 //Function tha control the win at the first time
 const correctNumberAtFirst = function (life, message) {
-  life = life + 1;
+  life = life + 2;
   parLife.textContent = `x${life} ❤️`;
   parLife.classList.add("up-life");
   setTimeout(function () {
@@ -250,7 +270,7 @@ btnCheck.addEventListener("click", function () {
     }
   } else {
     //When  there is no Input
-    if (!guess && !win) {
+    if ((guess < 1 || guess > 20 || !guess) && !win) {
       if (life > 0) {
         noNumber("⛔️ No! Number");
       }
@@ -281,21 +301,31 @@ btnCheck.addEventListener("click", function () {
         life = correctNumber(life, "🎉 Correct Number!");
       }
 
-      //When the number is too high
+      //When the number is high
     } else if (guess > SECRET_NUMBER) {
       if (life > 1 && !win) {
-        life = scoreDecrease(life, "📈 Too High!");
-        suggestionH("📈");
+        if (guess - SECRET_NUMBER <= 2) {
+          life = scoreDecrease(life, "📈 Almost there!");
+          suggestion("📈", 3);
+        } else {
+          life = scoreDecrease(life, "📈 Too High!");
+          suggestion("📈", 4);
+        }
       } else if (!win && life === 1) {
         loseGame();
         life = life - 1;
       }
 
-      //When the number is too low
+      //When the number is  low
     } else if (guess < SECRET_NUMBER) {
       if (life > 1 && !win) {
-        life = scoreDecrease(life, "📉 Too Low!");
-        suggestionL("📉");
+        if (SECRET_NUMBER - guess <= 2) {
+          life = scoreDecrease(life, "📉 Almost there!");
+          suggestion("📉", 1);
+        } else {
+          life = scoreDecrease(life, "📉 Too Low!");
+          suggestion("📉", 2);
+        }
       } else if (!win && life === 1) {
         loseGame();
         life = life - 1;
