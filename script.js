@@ -1,4 +1,16 @@
 "use strict";
+console.log("Copyright© 2022 BidGame");
+
+//VARIABLE INIZIALIZATION
+
+//Game variables
+const POINT = 50;
+let [secretNumber, level, life, topLife, score, win] = [0, 1, 5, 5, 0, false];
+//Random Number between 1-20
+secretNumber = Math.trunc(Math.random() * 20) + 1;
+
+//Rank variables
+let [game, text] = [0, ""];
 
 //Storage HighScore
 let highscore = 0;
@@ -7,57 +19,48 @@ if (localStorage.getItem("highscore") != null) {
   document.querySelector(".highscore").textContent = highscore;
 }
 
-//Random Number between 1-20
-let SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
-
-let POINT = 50;
-let text = "";
-let game = 0;
-let level = 1;
-let life = 5;
-let topLife = 5;
-let score = 0;
-let win = false;
-console.log("Copyright© 2022 BidGame");
-
-//BONUS LEVEL Variables
-let BONUS_NUMBER = 0;
-let levelCheck = 5;
-let bonusCheck = 0;
-let inBonus = false;
-let bonusFinish = false;
-
+//Game bonus variables
+let [bonusNumber, inBonus, bonusFinish] = [0, false, false];
+const levelCheck = 5;
 const bonusNumbers = new Array();
 
-// HTML <body>
+//------------------------------------------------//
+//--------- HTML ELEMENTS ------------------------//
+//------------------------------------------------//
+
+//<body>
 const body = document.querySelector("body");
 
-//HTML <h1>
+// <h1>
 const titLevel = document.querySelector(".game-liv");
 const titMessage = document.querySelector(".game-tit");
 
-//HTML <p>
+// <p>
 const parLife = document.querySelector(".life");
 const parHighscore = document.querySelector(".highscore");
 const parScore = document.querySelector(".score");
 const parRanking = document.querySelector(".ranking");
 
-//HTML <div>
+// <div>
 const divNumber = document.querySelector(".number");
 const divBar = document.querySelector(".bar");
 const divModal = document.querySelectorAll(".modal");
 const divOverlay = document.querySelector(".overlay");
 
-//HTML <input>
+// <input>
 const inGuess = document.querySelector(".guess");
 
-//HTML <button>
+// <button>
 const btnCheck = document.querySelector(".check");
 const btnAgain = document.querySelector(".again");
 const btnCloseModal = document.querySelectorAll(".close-modal");
 const btnGameInfo = document.querySelector(".info-game");
 const btnRank = document.querySelector(".rank");
 const btnLevNext = document.querySelector(".lev-next");
+
+//------------------------------------------------//
+//--------- MODAL CONTROL FUNCTION ---------------//
+//------------------------------------------------//
 
 //Function that control opening of Game Info
 const openModalGameInfo = function () {
@@ -83,52 +86,57 @@ const closeModalRank = function () {
   divOverlay.classList.add("hidden");
 };
 
+//------------------------------------------------//
+//--------- GAME FUNCTION ------------------------//
+//------------------------------------------------//
+
 //Function that control  when lost the game
 const loseGame = function () {
-  game = game + 1;
+  //1) Mod Homepage
   titMessage.textContent = "😭 GAME OVER!";
   body.style.backgroundColor = "#ff0000";
-  divNumber.textContent = SECRET_NUMBER;
+  divNumber.textContent = secretNumber;
   parLife.textContent = `x${0} ☠️`;
+  //2) Mod Rank
   btnRank.classList.remove("hidden");
+  game = game + 1;
   text = parRanking.textContent;
   text = text + ` - - - Game: ${game} Level: ${level} Score: ${score} - - -`;
   parRanking.textContent = text;
+  //3) Save the highscore
   localStorage.setItem("highscore", highscore);
 };
 
-//Function that control when lost the level bonus
-const loseBonus = function (message) {
-  titMessage.textContent = message;
-  divNumber.textContent = BONUS_NUMBER;
-  body.style.backgroundColor = "#ff0000";
-  btnLevNext.classList.remove("hidden");
-};
-
 //Function that control life decrease
-const scoreDecrease = function (life, message) {
+const lifeDecrease = function () {
+  //1) Decrase life
   life = life - 1;
+  //2)Visual effects
   parLife.textContent = `x${life} 💔`;
   parLife.classList.add("error1");
-  titMessage.classList.add("error1");
   divNumber.classList.add("error");
   setTimeout(function () {
-    titMessage.classList.remove("error1");
     parLife.classList.remove("error1");
     divNumber.classList.remove("error");
     parLife.textContent = `x${life} ❤️`;
   }, 200);
-  titMessage.textContent = message;
-  return life;
 };
 
 //Functions that control suggestion
 
 const suggestion = function (message) {
+  //1) set the suggestion text
+  titMessage.textContent = message;
+  titMessage.classList.add("error1");
+  setTimeout(function () {
+    titMessage.classList.remove("error1");
+  }, 200);
+
+  //2)set the animated tip
   if (arguments[1] === 1) {
     //Argument 1 Suggestion  Low a little
     divBar.style.backgroundColor = "#066eff";
-    divBar.textContent = message;
+    divBar.textContent = "📉";
     divBar.classList.add("move-cl");
     setTimeout(function () {
       divBar.classList.remove("move-cl");
@@ -137,7 +145,7 @@ const suggestion = function (message) {
   } else if (arguments[1] === 2) {
     //Argument 2 Suggestion  Low
     divBar.style.backgroundColor = "#0634ff";
-    divBar.textContent = message;
+    divBar.textContent = "📉";
     divBar.classList.add("move-cl");
     setTimeout(function () {
       divBar.classList.remove("move-cl");
@@ -146,7 +154,7 @@ const suggestion = function (message) {
   } else if (arguments[1] === 3) {
     //Argument 3 Suggestion  heigh a little
     divBar.style.backgroundColor = "#ff2a00";
-    divBar.textContent = message;
+    divBar.textContent = "📈";
     divBar.classList.add("move-cr");
     setTimeout(function () {
       divBar.classList.remove("move-cr");
@@ -155,7 +163,7 @@ const suggestion = function (message) {
   } else if (arguments[1] === 4) {
     //Argument 3 Suggestion  heigh
     divBar.style.backgroundColor = "#ff0000";
-    divBar.textContent = message;
+    divBar.textContent = "📈";
     divBar.classList.add("move-cr");
     setTimeout(function () {
       divBar.classList.remove("move-cr");
@@ -165,47 +173,20 @@ const suggestion = function (message) {
 };
 
 //Function that control no number input
-const noNumber = function (message) {
-  titMessage.textContent = message;
+const noNumber = function () {
+  if (arguments[0] !== undefined) {
+    titMessage.textContent = arguments[0];
+  }
   inGuess.classList.add("error2");
   titMessage.classList.add("error1");
   setTimeout(function () {
     inGuess.classList.remove("error2");
     titMessage.classList.remove("error1");
   }, 200);
-};
-
-//Function that control no number input in bonus level
-const noNumberBonus = function () {
-  inGuess.classList.add("error2");
-  titMessage.classList.add("error1");
-  setTimeout(function () {
-    inGuess.classList.remove("error2");
-    titMessage.classList.remove("error1");
-  }, 200);
-};
-
-//Function that control the win of bonus level
-const correctBonusNumber = function (life, message) {
-  life = life + 7;
-  parLife.textContent = `x${life} ❤️`;
-  parLife.classList.add("up-life");
-  setTimeout(function () {
-    parLife.classList.remove("up-life");
-  }, 200);
-  titMessage.textContent = message;
-  divNumber.textContent = BONUS_NUMBER;
-  divNumber.classList.add("win1");
-  setTimeout(function () {
-    divNumber.classList.remove("win1");
-  }, 5000);
-  body.style.backgroundColor = "#60b347";
-  btnLevNext.classList.remove("hidden");
-  return life;
 };
 
 //Function that control the win
-const correctNumber = function (life, message) {
+const correctNumber = function (message) {
   life = life + 1;
   parLife.textContent = `x${life} ❤️`;
   parLife.classList.add("up-life");
@@ -213,18 +194,17 @@ const correctNumber = function (life, message) {
     parLife.classList.remove("up-life");
   }, 200);
   titMessage.textContent = message;
-  divNumber.textContent = SECRET_NUMBER;
+  divNumber.textContent = secretNumber;
   divNumber.classList.add("win");
   setTimeout(function () {
     divNumber.classList.remove("win");
   }, 5000);
   body.style.backgroundColor = "#60b347";
   btnLevNext.classList.remove("hidden");
-  return life;
 };
 
 //Function tha control the win at the first time
-const correctNumberAtFirst = function (life, message) {
+const correctNumberAtFirst = function (message) {
   life = life + 2;
   parLife.textContent = `x${life} ❤️`;
   parLife.classList.add("up-life");
@@ -232,27 +212,59 @@ const correctNumberAtFirst = function (life, message) {
     parLife.classList.remove("up-life");
   }, 200);
   titMessage.textContent = message;
-  divNumber.textContent = SECRET_NUMBER;
+  divNumber.textContent = secretNumber;
   divNumber.classList.add("win1");
   setTimeout(function () {
     divNumber.classList.remove("win1");
   }, 5000);
   body.style.backgroundColor = "#ffbb00";
   btnLevNext.classList.remove("hidden");
-  return life;
 };
 
-//EVENT CHECK
+//------------------------------------------------//
+//--------- GAME BONUS FUNCTION ------------------//
+//------------------------------------------------//
 
+//Function that control when lost the level bonus
+const loseBonus = function (message) {
+  titMessage.textContent = message;
+  divNumber.textContent = bonusNumber;
+  body.style.backgroundColor = "#ff0000";
+  btnLevNext.classList.remove("hidden");
+};
+
+//Function that control the win of bonus level
+const correctBonusNumber = function (message) {
+  life = life + 7;
+  parLife.textContent = `x${life} ❤️`;
+  parLife.classList.add("up-life");
+  setTimeout(function () {
+    parLife.classList.remove("up-life");
+  }, 200);
+  titMessage.textContent = message;
+  divNumber.textContent = bonusNumber;
+  divNumber.classList.add("win1");
+  setTimeout(function () {
+    divNumber.classList.remove("win1");
+  }, 5000);
+  body.style.backgroundColor = "#60b347";
+  btnLevNext.classList.remove("hidden");
+};
+
+//------------------------------------------------//
+//--------- GAME EVENTS --------------------------//
+//------------------------------------------------//
+
+//EVENT CHECK
 btnCheck.addEventListener("click", function () {
   const guess = Number(inGuess.value);
 
   if (inBonus) {
     //When  there is no Input
     if (!guess && !bonusFinish) {
-      noNumberBonus();
+      noNumber();
       //When the number is correct
-    } else if (guess === BONUS_NUMBER && !bonusFinish) {
+    } else if (guess === bonusNumber && !bonusFinish) {
       bonusFinish = true;
       score = score + POINT * 3;
       parScore.textContent = score;
@@ -261,10 +273,10 @@ btnCheck.addEventListener("click", function () {
         highscore = score;
         parHighscore.textContent = highscore;
       }
-      life = correctBonusNumber(life, "🎉 Correct Number!");
+      correctBonusNumber("🎉 Correct Number!");
 
       //When the number isn't correct
-    } else if (guess != BONUS_NUMBER && !bonusFinish) {
+    } else if (guess != bonusNumber && !bonusFinish) {
       loseBonus("😅 Ops...");
       bonusFinish = true;
     }
@@ -276,7 +288,7 @@ btnCheck.addEventListener("click", function () {
       }
 
       //When the number is correct
-    } else if (guess === SECRET_NUMBER && !win && life > 0) {
+    } else if (guess === secretNumber && !win && life > 0) {
       win = true;
 
       if (life === topLife) {
@@ -288,7 +300,7 @@ btnCheck.addEventListener("click", function () {
           highscore = score;
           parHighscore.textContent = highscore;
         }
-        life = correctNumberAtFirst(life, "😎 Supreme champion!");
+        correctNumberAtFirst("😎 Supreme champion!");
       } else {
         //Incraese the score and calculate the highScore
         score = score + life * POINT;
@@ -298,66 +310,43 @@ btnCheck.addEventListener("click", function () {
           highscore = score;
           parHighscore.textContent = highscore;
         }
-        life = correctNumber(life, "🎉 Correct Number!");
+        correctNumber("🎉 Correct Number!");
       }
 
       //When the number is high
-    } else if (guess > SECRET_NUMBER) {
+    } else if (guess > secretNumber) {
       if (life > 1 && !win) {
-        if (guess - SECRET_NUMBER <= 2) {
-          life = scoreDecrease(life, "📈 Almost there!");
-          suggestion("📈", 3);
+        if (guess - secretNumber <= 2) {
+          lifeDecrease();
+          suggestion("📈 Almost there!", 3);
         } else {
-          life = scoreDecrease(life, "📈 Too High!");
-          suggestion("📈", 4);
+          lifeDecrease();
+          suggestion("📈 Too High!", 4);
         }
       } else if (!win && life === 1) {
-        loseGame();
         life = life - 1;
+        loseGame();
       }
 
       //When the number is  low
-    } else if (guess < SECRET_NUMBER) {
+    } else if (guess < secretNumber) {
       if (life > 1 && !win) {
-        if (SECRET_NUMBER - guess <= 2) {
-          life = scoreDecrease(life, "📉 Almost there!");
-          suggestion("📉", 1);
+        if (secretNumber - guess <= 2) {
+          lifeDecrease();
+          suggestion("📉 Almost there!", 1);
         } else {
-          life = scoreDecrease(life, "📉 Too Low!");
-          suggestion("📉", 2);
+          lifeDecrease();
+          suggestion("📉 Too Low!", 2);
         }
       } else if (!win && life === 1) {
-        loseGame();
         life = life - 1;
+        loseGame();
       }
     }
   }
 });
 
-//EVENT AGAIN
-
-btnAgain.addEventListener("click", function () {
-  topLife = 5;
-  life = 5;
-  win = false;
-  score = 0;
-  highscore = localStorage.getItem("highscore");
-  parHighscore.textContent = highscore;
-  parScore.textContent = score;
-  parLife.textContent = `x${life} ❤️`;
-  SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
-  BONUS_NUMBER = 0;
-  divNumber.textContent = "?";
-  titMessage.textContent = "Guess My Number!";
-  body.style.backgroundColor = "#222";
-  inGuess.value = "";
-  btnLevNext.classList.add("hidden");
-  level = 1;
-  titLevel.textContent = `level ${level}`;
-  btnRank.classList.add("hidden");
-  divNumber.classList.remove("win");
-  divNumber.classList.remove("win1");
-});
+//-------------------------------------------------//
 
 //EVENT NEXT LEVEL
 btnLevNext.addEventListener("click", function () {
@@ -365,6 +354,7 @@ btnLevNext.addEventListener("click", function () {
 
   if (level % levelCheck === 0) {
     //i'am in bonus level
+    //1) set the template for bonus level
     titLevel.textContent = `level Bonus`;
     divNumber.textContent = "☆";
     divNumber.classList.remove("win");
@@ -372,8 +362,10 @@ btnLevNext.addEventListener("click", function () {
     body.style.backgroundColor = "#6200ff";
     inGuess.value = "";
     btnLevNext.classList.add("hidden");
-    bonusFinish = false;
-    inBonus = true;
+
+    //2)set the variables
+    [bonusFinish, inBonus] = [false, true];
+
     let flag = false;
 
     while (!flag) {
@@ -389,18 +381,19 @@ btnLevNext.addEventListener("click", function () {
         flag = true;
       }
     }
-    bonusCheck = Math.trunc(Math.random() * 3);
-    BONUS_NUMBER = bonusNumbers[bonusCheck];
+    let bonusCheck = Math.trunc(Math.random() * 3);
+    bonusNumber = bonusNumbers[bonusCheck];
     titMessage.textContent = `${bonusNumbers[0]}-${bonusNumbers[1]}-${bonusNumbers[2]} ?`;
   } else {
     //i'am in a normal level
-
+    //1) Set the variables
+    [bonusFinish, inBonus] = [false, false];
     titLevel.textContent = `level ${level}`;
+    [secretNumber, win] = [0, false];
+    secretNumber = Math.trunc(Math.random() * 20) + 1;
     topLife = life;
-    win = false;
-    SECRET_NUMBER = Math.trunc(Math.random() * 20) + 1;
-    inBonus = false;
-    bonusFinish = false;
+
+    //2) set the template for normal level
     divNumber.textContent = "?";
     divNumber.classList.remove("win");
     divNumber.classList.remove("win1");
@@ -410,6 +403,38 @@ btnLevNext.addEventListener("click", function () {
     btnLevNext.classList.add("hidden");
   }
 });
+
+//------------------------------------------------//
+
+//EVENT AGAIN
+btnAgain.addEventListener("click", function () {
+  //1)Reset game and bonus variables
+  [secretNumber, level, life, topLife, score, win] = [0, 1, 5, 5, 0, false];
+  //Random Number between 1-20
+  secretNumber = Math.trunc(Math.random() * 20) + 1;
+  //Storage HighScore
+  highscore = localStorage.getItem("highscore");
+  //Game bonus variables
+  [bonusNumber, inBonus, bonusFinish] = [0, false, false];
+
+  //2)Reset home-page
+  parHighscore.textContent = highscore;
+  parScore.textContent = score;
+  parLife.textContent = `x${life} ❤️`;
+  divNumber.textContent = "?";
+  titMessage.textContent = "Guess My Number!";
+  body.style.backgroundColor = "#222";
+  inGuess.value = "";
+  btnLevNext.classList.add("hidden");
+  titLevel.textContent = `level ${level}`;
+  btnRank.classList.add("hidden");
+  divNumber.classList.remove("win");
+  divNumber.classList.remove("win1");
+});
+
+//------------------------------------------------//
+//--------- MODAL CONTROL EVENTS -----------------//
+//------------------------------------------------//
 
 //EVENT OPEN GAME INFO
 btnGameInfo.addEventListener("click", openModalGameInfo);

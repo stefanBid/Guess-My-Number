@@ -1,4 +1,4 @@
-`version: 1.8`
+`version: 1.9`
 
 # GuessMyNumber
 
@@ -61,8 +61,3 @@ For each 5 level you can play a bonus level which consists in guessing a number 
 ## When you lose
 
 <img src="https://i.ibb.co/LN6fw7C/lost.png" alt="Guess My Number" >
-
-
-
-
-
